@@ -12,7 +12,7 @@ def str2bool(v):
     else:
         raise configargparse.ArgumentTypeError('Boolean value expected.')
 
-
+# 트레이닝을 실행할 때 인자로 설정 파일을 받아서 파싱하는 함수
 def parse_args():
     parser = configargparse.ArgParser()
     parser.add('-c', '--config', required=True, is_config_file=True, help='Config file path')

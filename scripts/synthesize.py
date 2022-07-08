@@ -213,6 +213,7 @@ def align_words(audio, text):
     # resample audio to 8K
     audio_8k = librosa.resample(audio, 16000, 8000)
     wave_file = 'output/temp.wav'
+    # soundfile
     sf.write(wave_file, audio_8k, 8000, 'PCM_16')
 
     # run gentle to align words
@@ -233,6 +234,7 @@ def main(mode, checkpoint_path, option):
     # 생성된 학습 모델의 정보를 불러오는 것
     args, generator, loss_fn, lang_model, speaker_model, out_dim = utils.train_utils.load_checkpoint_and_model(
         checkpoint_path, device)
+    # 결과가 저장되는 경로
     result_save_path = 'output/generation_results'
 
     # load mean vec
@@ -253,6 +255,7 @@ def main(mode, checkpoint_path, option):
         collate_fn = default_collate_fn
 
     def load_dataset(path):
+        # 음성 모션 데이터셋을 반환
         dataset = SpeechMotionDataset(path,
                                       n_poses=args.n_poses,
                                       subdivision_stride=args.subdivision_stride,
@@ -441,12 +444,18 @@ def main(mode, checkpoint_path, option):
 
 
 if __name__ == '__main__':
+    # 어떤 모드로 실행할지 결정하는 인자
     mode = sys.argv[1]  # {eval, from_db_clip, from_text}
+    # 학습된 모델의 전체적인 정보가 들어가 있는 체크 포인트
     ckpt_path = sys.argv[2]
 
+    # 인자가 세 개 이상인 경우 추가적인 옵션
+    # ex) 남성 목소리, 여성 목소리
     option = None
     if len(sys.argv) > 3:
         option = sys.argv[3]
 
+    # 로그 설정
     set_logger()
+    # 메인 함수 실행
     main(mode, ckpt_path, option)

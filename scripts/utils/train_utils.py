@@ -35,12 +35,16 @@ matplotlib.rcParams['axes.unicode_minus'] = False
 def set_logger(log_path=None, log_filename='log'):
     for handler in logging.root.handlers[:]:
         logging.root.removeHandler(handler)
+    # 임의의 파일류 객체와 같은 스트림으로 로깅 출력 가능
+    # write(), flush()
     handlers = [logging.StreamHandler()]
     if log_path is not None:
         os.makedirs(log_path, exist_ok=True)
         handlers.append(
             RotatingFileHandler(os.path.join(log_path, log_filename), maxBytes=10 * 1024 * 1024, backupCount=5))
+    # 로그의 기본 설정을 지정
     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s: %(message)s', handlers=handlers)
+    # 로거를 얻어서 로그 레벨을 지정
     logging.getLogger("matplotlib").setLevel(logging.WARNING)
 
 
@@ -166,14 +170,17 @@ def get_speaker_model(net):
 
 def load_checkpoint_and_model(checkpoint_path, _device='cpu'):
     print('loading checkpoint {}'.format(checkpoint_path))
+    # 체크포인트 정보에 있는 모델을 메모리에 올리서 올린 정보를 가져오는 작업
     checkpoint = torch.load(checkpoint_path, map_location=_device)
     args = checkpoint['args']
+    # 학습 주기(횟수)?
     epoch = checkpoint['epoch']
     lang_model = checkpoint['lang_model']
     speaker_model = checkpoint['speaker_model']
     pose_dim = checkpoint['pose_dim']
     print('epoch {}'.format(epoch))
 
+    # generator : 동작 생성기
     generator, discriminator, loss_fn = train.init_model(args, lang_model, speaker_model, pose_dim, _device)
     generator.load_state_dict(checkpoint['gen_dict'])
 

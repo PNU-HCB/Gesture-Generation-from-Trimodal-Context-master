@@ -38,6 +38,7 @@ def init_model(args, lang_model, speaker_model, pose_dim, _device):
     # init model
     n_frames = args.n_poses
     generator = discriminator = loss_fn = None
+    # 넘겨주는 정보에 따른 다른 모델을 반환
     if args.model == 'multimodal_context':
         generator = PoseGenerator(args,
                                   n_words=lang_model.n_words,
